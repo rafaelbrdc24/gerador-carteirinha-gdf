@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Gerador de Carteirinha GDF Saúde</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f0f0;
+      padding: 20px;
+    }
+    .controls {
+      margin-bottom: 20px;
+    }
+    .controls label {
+      display: block;
+      margin: 8px 0 2px;
+    }
+    #cardCanvas {
+      border: 1px solid #ccc;
+      background: #fff;
+      display: block;
+      margin-top: 10px;
+      /* Ajuste o tamanho visual do canvas aqui */
+      width: 502px; /* Metade de 1004px */
+      height: 326px; /* Metade de 651px (arredondado) */
+    }
+    #backCardImage { /* Estilo para a imagem da parte de trás */
+        display: block;
+        margin-top: 20px; /* Espaço entre a frente e o verso */
+        /* Ajuste o tamanho visual da imagem do verso aqui */
+        width: 502px; /* Metade de 1004px */
+        height: 326px; /* Metade de 651px (arredondado) */
+    }
+    button {
+      margin-right: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Gerador de Carteirinha GDF Saúde</h1>
+
+  <div class="controls">
+    <label>1. Número da carteirinha:
+      <input id="inputNumero" type="text" value="010425226">
+    </label>
+
+    <label>2. Nome do titular:
+      <input id="inputNome" type="text" value="Zacarias De Oliveira">
+    </label>
+
+    <label>3. Data de início do plano:
+      <input id="inputData" type="date" value="2022-09-05">
+    </label>
+  </div>
+
+  <button id="btnAtualizar">🔄 Atualizar Carteirinha</button>
+  <button id="btnBaixar">📥 Baixar Carteirinha</button>
+
+  <canvas id="cardCanvas" width="502" height="326"></canvas>
+  <img id="backCardImage" src="imagem a baixo.png" alt="Verso da Carteirinha GDF Saúde">
+
+
+  <script>
+    // Defina as novas dimensões para facilitar o ajuste dos textos
+    const CARD_WIDTH = 502;
+    const CARD_HEIGHT = 326;
+
+    const canvas = document.getElementById('cardCanvas');
+    const ctx    = canvas.getContext('2d');
+    const imgFront = document.createElement('img'); // Imagem da frente
+    imgFront.src   = 'imagem vazia.png';  // Certifique-se que o nome do arquivo PNG está correto
+
+    const imgBack = document.getElementById('backCardImage'); // Imagem do verso
+
+    // segmento fixo
+    const segmentacaoText = "Ambulatorial + hospitalar com obstetrícia";
+    const validadeText = "CONFORME REGULAMENTADO";
+
+    // Variável para controlar se ambas as imagens estão carregadas
+    let frontImageLoaded = false;
+    let backImageLoaded = false;
+
+    // Função para verificar se ambas as imagens carregaram
+    function checkImagesLoaded() {
+      if (frontImageLoaded && backImageLoaded) {
+        drawCard();
+        document.getElementById('btnAtualizar').disabled = false;
+        document.getElementById('btnBaixar').disabled    = false;
+      }
+    }
+
+    // Carregamento da imagem da frente
+    imgFront.onload = () => {
+      frontImageLoaded = true;
+      checkImagesLoaded();
+    };
+
+    // Carregamento da imagem do verso (para o download)
+    imgBack.onload = () => {
+        backImageLoaded = true;
+        checkImagesLoaded();
+    };
+
+    // Desabilita botões até as imagens carregarem
+    document.getElementById('btnAtualizar').disabled = true;
+    document.getElementById('btnBaixar').disabled    = true;
+
+    // Redesenha o cartão (somente a frente)
+    function drawCard() {
+      // limpa tudo
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // desenha template usando as novas dimensões do canvas
+      ctx.drawImage(imgFront, 0, 0, CARD_WIDTH, CARD_HEIGHT);
+
+      // configura texto
+      ctx.fillStyle = '#FFFFFF'; // Mantendo a cor branca
+      ctx.textAlign = 'left';
+
+      // **IMPORTANTE:** As coordenadas e tamanhos de fonte PRECISAM ser ajustados
+      // para a nova escala (metade do tamanho original).
+      // Se a carteirinha era 1004x651, agora é 502x326.
+      // Então, as coordenadas (x, y) e os tamanhos de fonte também devem ser divididos por 2
+      // ou ajustados manualmente para a nova escala.
+
+      // As coordenadas abaixo são uma estimativa para a METADE DO TAMANHO.
+      // Você provavelmente precisará fazer ajustes finos.
+
+      // 1. Número (original: 75, 175) -> Ajustado para metade
+      ctx.font = 'bold 15px Arial'; // Metade do tamanho de 30px
+      ctx.fillText(
+        document.getElementById('inputNumero').value,
+        37, 87 // Metade de 75, 175 (aproximado)
+      );
+
+      // 2. Nome (original: 75, 220) -> Ajustado para metade
+      ctx.font = 'bold 15px Arial'; // Metade do tamanho de 30px
+      ctx.fillText(
+        document.getElementById('inputNome').value.toUpperCase(),
+        37, 110 // Metade de 75, 220 (aproximado)
+      );
+
+      // 3. Data de início (original: 75, 340) -> Ajustado para metade
+      ctx.font = 'bold 12.5px Arial'; // Metade do tamanho de 25px
+      const raw = document.getElementById('inputData').value;
+      const fmt = raw ? raw.split('-').reverse().join('/') : '  /  /    ';
+      ctx.fillText(fmt, 37, 170); // Metade de 75, 340 (aproximado)
+
+      // 4. Validade (original: 300, 340) -> Ajustado para metade
+      ctx.font = 'bold 14px Arial'; // Metade do tamanho de 28px
+      ctx.fillText(validadeText, 150, 170); // Metade de 300, 340 (aproximado)
+
+      // 5. Segmentação (original: 75, 435) -> Ajustado para metade
+      ctx.font = 'bold 15px Arial'; // Metade do tamanho de 30px
+      ctx.fillText(segmentacaoText, 37, 217); // Metade de 75, 435 (aproximado)
+    }
+
+    // faz o download combinando as duas imagens
+    function downloadCard() {
+      drawCard(); // Garante que a frente esteja atualizada no tamanho reduzido
+
+      // Cria um canvas temporário para combinar as imagens
+      const combinedCanvas = document.createElement('canvas');
+      // A largura será a mesma das novas dimensões do canvas
+      combinedCanvas.width = CARD_WIDTH;
+      // A altura será a soma das alturas do canvas e da imagem do verso nas novas dimensões, mais um pequeno espaço
+      combinedCanvas.height = CARD_HEIGHT + imgBack.naturalHeight / 2 + 20; // NaturalHeight/2 para o tamanho reduzido, + 20px de margem
+
+      const combinedCtx = combinedCanvas.getContext('2d');
+
+      // Desenha a imagem da frente (com os dados) no canvas combinado
+      combinedCtx.drawImage(canvas, 0, 0, CARD_WIDTH, CARD_HEIGHT); // Desenha no novo tamanho
+
+      // Desenha a imagem do verso abaixo da imagem da frente, também na nova escala
+      combinedCtx.drawImage(imgBack, 0, CARD_HEIGHT + 20, CARD_WIDTH, imgBack.naturalHeight / 2); // Reduz a imagem do verso
+
+      try {
+        const link      = document.createElement('a');
+        link.download   = 'carteirinha_gdf_frente_verso_reduzida.png'; // Nome do arquivo combinado
+        link.href       = combinedCanvas.toDataURL('image/png');
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } catch (e) {
+        alert('Erro ao gerar o download.\nFaça um print da tela ou use o Firefox para abrir o arquivo diretamente.');
+      }
+    }
+
+    // eventos nos botões
+    document.getElementById('btnAtualizar').onclick = drawCard;
+    document.getElementById('btnBaixar').onclick     = downloadCard;
+  </script>
+</body>
+</html>
