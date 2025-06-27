@@ -190,12 +190,14 @@
     const loginContainer = document.getElementById('login-container');
     const appContainer = document.getElementById('app-container');
     const loginButton = document.getElementById('loginButton');
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
 
     function checkLogin() {
-      const usernameInput = document.getElementById('username').value;
-      const passwordInput = document.getElementById('password').value;
+      const usernameVal = usernameInput.value;
+      const passwordVal = passwordInput.value;
 
-      if (usernameInput === correctUsername && passwordInput === correctPassword) {
+      if (usernameVal === correctUsername && passwordVal === correctPassword) {
         loginContainer.style.display = 'none';
         appContainer.style.display = 'block';
         checkImagesLoaded();
@@ -205,6 +207,19 @@
     }
 
     loginButton.addEventListener('click', checkLogin);
+
+    // Adiciona o evento de keydown para os campos de usuário e senha
+    usernameInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') { // Usa event.key para modernidade
+        checkLogin();
+      }
+    });
+
+    passwordInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') { // Usa event.key para modernidade
+        checkLogin();
+      }
+    });
 
     const CARD_WIDTH = 502;
     const CARD_HEIGHT = 326;
@@ -289,6 +304,13 @@
         // Garantir que uma data de início do plano válida foi selecionada
         if (!inputData.value) {
             alert("Erro: Por favor, selecione uma 'Data de início do plano' válida.");
+            return false;
+        }
+
+        // Validação do ano da data de início do plano (entre 2021 e 2026)
+        const ano = new Date(inputData.value).getFullYear();
+        if (ano < 2021 || ano > 2026) {
+            alert("Erro: O ano da 'Data de início do plano' deve estar entre 2021 e 2026.");
             return false;
         }
 
