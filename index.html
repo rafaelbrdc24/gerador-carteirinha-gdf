@@ -311,7 +311,11 @@
 
       try {
         const link      = document.createElement('a');
-        link.download   = 'carteirinha_gdf_frente_verso_reduzida.png'; // Nome do arquivo combinado
+        // PEGA O NOME DO INPUT E NORMALIZA PARA O NOME DO ARQUIVO
+        const nomeDoBeneficiario = document.getElementById('inputNome').value;
+        const nomeArquivo = nomeDoBeneficiario.replace(/[^a-z0-9]/gi, '_').toLowerCase(); // Substitui caracteres especiais por '_' e converte para minúsculas
+
+        link.download   = `carteirinha_${nomeArquivo}.png`; // Usa o nome do beneficiário no nome do arquivo
         link.href       = combinedCanvas.toDataURL('image/png');
         link.style.display = 'none';
         document.body.appendChild(link);
