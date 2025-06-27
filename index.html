@@ -8,7 +8,76 @@
       font-family: Arial, sans-serif;
       background: #f0f0f0;
       padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center; /* Center content horizontally */
     }
+    .header {
+      width: 100%;
+      text-align: center;
+      margin-bottom: 30px;
+      padding: 15px;
+      background-color: #004d99; /* Darker blue, similar to GDF Saúde logo */
+      color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .header img {
+      height: 60px; /* Adjust as needed */
+      vertical-align: middle;
+      margin-right: 15px;
+    }
+    .header h2 {
+      display: inline-block;
+      vertical-align: middle;
+      margin: 0;
+      font-size: 2em;
+    }
+
+    #login-container {
+      background: #fff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      margin-top: 50px; /* Space from top */
+    }
+    #login-container label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+    #login-container input {
+      width: 250px;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    #login-container button {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    #login-container button:hover {
+      background-color: #0056b3;
+    }
+
+    #app-container {
+      display: none; /* Hidden by default */
+      width: 100%;
+      max-width: 800px; /* Limit width of the app content */
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      margin-top: 20px;
+    }
+
     .controls {
       margin-bottom: 20px;
     }
@@ -16,52 +85,115 @@
       display: block;
       margin: 8px 0 2px;
     }
+    .controls input[type="text"],
+    .controls input[type="date"] {
+      width: calc(100% - 16px); /* Adjust width for padding */
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
     #cardCanvas {
       border: 1px solid #ccc;
       background: #fff;
       display: block;
       margin-top: 10px;
-      /* Ajuste o tamanho visual do canvas aqui */
-      width: 502px; /* Metade de 1004px */
-      height: 326px; /* Metade de 651px (arredondado) */
+      width: 502px;
+      height: 326px;
     }
-    #backCardImage { /* Estilo para a imagem da parte de trás */
+    #backCardImage {
         display: block;
-        margin-top: 20px; /* Espaço entre a frente e o verso */
-        /* Ajuste o tamanho visual da imagem do verso aqui */
-        width: 502px; /* Metade de 1004px */
-        height: 326px; /* Metade de 651px (arredondado) */
+        margin-top: 20px;
+        width: 502px;
+        height: 326px;
     }
     button {
       margin-right: 5px;
+      padding: 10px 15px;
+      background-color: #28a745; /* Green for update */
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1em;
+    }
+    button#btnBaixar {
+        background-color: #007bff; /* Blue for download */
+    }
+    button:hover {
+        opacity: 0.9;
+    }
+    button:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
     }
   </style>
 </head>
 <body>
-  <h1>Gerador de Carteirinha GDF Saúde</h1>
 
-  <div class="controls">
-    <label>1. Número da carteirinha:
-      <input id="inputNumero" type="text" value="010425226">
-    </label>
-
-    <label>2. Nome do titular:
-      <input id="inputNome" type="text" value="Nome do Beneficiario">
-    </label>
-
-    <label>3. Data de início do plano:
-      <input id="inputData" type="date" value="2022-09-05">
-    </label>
+  <div class="header">
+    <img src="logogdfsaude.png" alt="Logo GDF Saúde">
+    <h2>Gerador de Carteirinha GDF Saúde</h2>
   </div>
 
-  <button id="btnAtualizar">🔄 Atualizar Carteirinha</button>
-  <button id="btnBaixar">📥 Baixar Carteirinha</button>
+  <div id="login-container">
+    <label>Usuário:
+      <input type="text" id="username" value="user">
+    </label>
+    <label>Senha:
+      <input type="password" id="password" value="pass">
+    </label>
+    <button id="loginButton">Entrar</button>
+  </div>
 
-  <canvas id="cardCanvas" width="502" height="326"></canvas>
-  <img id="backCardImage" src="imagem a baixo.png" alt="Verso da Carteirinha GDF Saúde">
+  <div id="app-container">
+    <div class="controls">
+      <label>1. Número da carteirinha:
+        <input id="inputNumero" type="text" value="1234567890">
+      </label>
+
+      <label>2. Nome do titular:
+        <input id="inputNome" type="text" value="Nome do Beneficiario">
+      </label>
+
+      <label>3. Data de início do plano:
+        <input id="inputData" type="date" value="2022-09-05">
+      </label>
+    </div>
+
+    <button id="btnAtualizar">🔄 Atualizar Carteirinha</button>
+    <button id="btnBaixar">📥 Baixar Carteirinha</button>
+
+    <canvas id="cardCanvas" width="502" height="326"></canvas>
+    <img id="backCardImage" src="imagem a baixo.png" alt="Verso da Carteirinha GDF Saúde">
+  </div>
 
 
   <script>
+    // Login credentials
+    const correctUsername = "user"; // CHANGE THIS TO YOUR DESIRED USERNAME
+    const correctPassword = "pass"; // CHANGE THIS TO YOUR DESIRED PASSWORD
+
+    const loginContainer = document.getElementById('login-container');
+    const appContainer = document.getElementById('app-container');
+    const loginButton = document.getElementById('loginButton');
+
+    function checkLogin() {
+      const usernameInput = document.getElementById('username').value;
+      const passwordInput = document.getElementById('password').value;
+
+      if (usernameInput === correctUsername && passwordInput === correctPassword) {
+        loginContainer.style.display = 'none';
+        appContainer.style.display = 'block';
+        // After successful login, ensure images are loaded and card is drawn
+        checkImagesLoaded();
+      } else {
+        alert("Usuário ou senha incorretos. Tente novamente.");
+      }
+    }
+
+    loginButton.addEventListener('click', checkLogin);
+
     // Defina as novas dimensões para facilitar o ajuste dos textos
     const CARD_WIDTH = 502;
     const CARD_HEIGHT = 326;
@@ -85,8 +217,11 @@
     function checkImagesLoaded() {
       if (frontImageLoaded && backImageLoaded) {
         drawCard();
-        document.getElementById('btnAtualizar').disabled = false;
-        document.getElementById('btnBaixar').disabled    = false;
+        // Only enable buttons if appContainer is visible (i.e., logged in)
+        if (appContainer.style.display === 'block') {
+          document.getElementById('btnAtualizar').disabled = false;
+          document.getElementById('btnBaixar').disabled    = false;
+        }
       }
     }
 
@@ -102,7 +237,7 @@
         checkImagesLoaded();
     };
 
-    // Desabilita botões até as imagens carregarem
+    // Desabilita botões até as imagens carregarem e o login ser feito
     document.getElementById('btnAtualizar').disabled = true;
     document.getElementById('btnBaixar').disabled    = true;
 
