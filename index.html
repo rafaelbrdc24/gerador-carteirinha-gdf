@@ -179,7 +179,7 @@
   </div>
 
   <div class="footer">
-    <p>Versão Beta Test 0.1.9</p>
+    <p>Versão Beta Test 0.2.0</p>
   </div>
 
   <script>
@@ -307,10 +307,10 @@
             return false;
         }
 
-        // Validação do ano da data de início do plano (entre 2021 e 2026)
+        // Validação do ano da data de início do plano (entre 2020 e 2026)
         const ano = new Date(inputData.value).getFullYear();
-        if (ano < 2021 || ano > 2026) {
-            alert("Erro: O ano da 'Data de início do plano' deve estar entre 2021 e 2026.");
+        if (ano < 2020 || ano > 2026) {
+            alert("Erro: O ano da 'Data de início do plano' deve estar entre 2020 e 2026.");
             return false;
         }
 
